@@ -91,4 +91,53 @@ PYTHON_RULES = [
                        'is a SQL injection vulnerability. Always use parameterized queries.',
         'cwe': 'CWE-89'
     },
+    {
+        'id': 'PY011',
+        'title': 'Use of input() in Python 2 Style',
+        'severity': 'MEDIUM',
+        'pattern': r'\braw_input\s*\(',
+        'description': 'raw_input() is Python 2 only. In Python 2, input() evaluates '
+                       'the input as code — equivalent to eval(). Ensure you are using '
+                       'Python 3 where input() is safe.',
+        'cwe': 'CWE-95'
+    },
+    {
+        'id': 'PY012',
+        'title': 'Yaml.load() Without Loader',
+        'severity': 'HIGH',
+        'pattern': r'yaml\.load\s*\([^,)]+\)',
+        'description': 'yaml.load() without an explicit Loader argument can deserialize '
+                       'arbitrary Python objects, leading to remote code execution. '
+                       'Use yaml.safe_load() instead.',
+        'cwe': 'CWE-502'
+    },
+    {
+        'id': 'PY013',
+        'title': 'Hardcoded Secret in URL',
+        'severity': 'HIGH',
+        'pattern': r'https?://[^"\']*:(password|secret|token|key|pass)=[^"\'&\s]{4,}',
+        'description': 'A secret, password, or token appears to be embedded directly '
+                       'in a URL. Credentials in URLs are logged by servers and proxies.',
+        'cwe': 'CWE-312'
+    },
+    {
+        'id': 'PY014',
+        'title': 'Use of tempfile.mktemp()',
+        'severity': 'MEDIUM',
+        'pattern': r'\btempfile\.mktemp\s*\(',
+        'description': 'mktemp() has a race condition between file creation and use, '
+                       'allowing an attacker to substitute a malicious file. '
+                       'Use tempfile.mkstemp() instead.',
+        'cwe': 'CWE-377'
+    },
+    {
+        'id': 'PY015',
+        'title': 'Flask Debug Mode Enabled',
+        'severity': 'HIGH',
+        'pattern': r'app\.run\s*\([^)]*debug\s*=\s*True',
+        'description': 'Running Flask with debug=True in production exposes an '
+                       'interactive debugger that allows arbitrary code execution '
+                       'by anyone who can reach the server.',
+        'cwe': 'CWE-94'
+    },
 ]

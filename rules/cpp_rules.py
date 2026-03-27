@@ -37,13 +37,13 @@ CPP_RULES = [
         'cwe': 'CWE-120'
     },
     {
-        'id': 'CPP005',
-        'title': 'Format String Vulnerability',
-        'severity': 'HIGH',
-        'pattern': r'\b(printf|fprintf|sprintf|syslog)\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*[,\)]',
-        'description': 'A user-controlled variable may be passed directly as a format string. '
-                       'Always use an explicit format: printf("%s", input) not printf(input).',
-        'cwe': 'CWE-134'
+    'id': 'CPP005',
+    'title': 'Format String Vulnerability',
+    'severity': 'HIGH',
+    'pattern': r'\b(printf|fprintf|sprintf|syslog)\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)',
+    'description': 'A user-controlled variable may be passed directly as a format string. '
+                   'Always use an explicit format: printf("%s", input) not printf(input).',
+    'cwe': 'CWE-134'
     },
     {
         'id': 'CPP006',
@@ -91,5 +91,53 @@ CPP_RULES = [
                        'exceed the destination buffer. Integer overflow in size '
                        'calculations is a common heap corruption vector.',
         'cwe': 'CWE-131'
+    },
+    {
+        'id': 'CPP011',
+        'title': 'Use of strcasecmp() / stricmp()',
+        'severity': 'LOW',
+        'pattern': r'\b(strcasecmp|stricmp|strnicmp)\s*\(',
+        'description': 'These functions are non-standard and behave inconsistently '
+                       'across platforms. Use explicit case normalization instead.',
+        'cwe': 'CWE-676'
+    },
+    {
+        'id': 'CPP012',
+        'title': 'Integer Overflow in Size Calculation',
+        'severity': 'HIGH',
+        'pattern': r'malloc\s*\(\s*\w+\s*\*\s*\w+\s*\)',
+        'description': 'Multiplying two integers for use as a malloc size can overflow, '
+                       'resulting in a much smaller allocation than intended. '
+                       'Use calloc() or validate sizes before multiplying.',
+        'cwe': 'CWE-190'
+    },
+    {
+        'id': 'CPP013',
+        'title': 'Unsafe strtok() Usage',
+        'severity': 'MEDIUM',
+        'pattern': r'\bstrtok\s*\(',
+        'description': 'strtok() uses a static internal buffer making it non-reentrant '
+                       'and unsafe in multi-threaded code. Use strtok_r() instead.',
+        'cwe': 'CWE-362'
+    },
+    {
+        'id': 'CPP014',
+        'title': 'Signed/Unsigned Integer Comparison Risk',
+        'severity': 'LOW',
+        'pattern': r'\bsizeof\s*\([^)]+\)\s*[><=!]+\s*-\d',
+        'description': 'Comparing sizeof() result (unsigned) with a negative value '
+                       'always evaluates unexpectedly due to implicit conversion. '
+                       'Ensure comparisons use consistent signedness.',
+        'cwe': 'CWE-195'
+    },
+    {
+        'id': 'CPP015',
+        'title': 'Use of atoi() / atof() Without Error Checking',
+        'severity': 'MEDIUM',
+        'pattern': r'\b(atoi|atof|atol|atoll)\s*\(',
+        'description': 'atoi() and related functions return 0 on invalid input with '
+                       'no way to distinguish from a legitimate zero value. '
+                       'Use strtol() with error checking instead.',
+        'cwe': 'CWE-20'
     },
 ]

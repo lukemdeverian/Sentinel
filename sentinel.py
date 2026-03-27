@@ -60,9 +60,7 @@ class Scanner:
                 continue
 
             # Skip lines that are purely rule metadata dictionaries
-            # These look like: 'id': 'CPP001' or 'title': 'something'
-            # We detect them by checking if the line is a dict entry where
-            # the KEY is a known rule metadata field
+            # or string continuations that are part of rule definitions
             metadata_keys = (
                 "'id'", '"id"',
                 "'title'", '"title"',
@@ -72,6 +70,9 @@ class Scanner:
                 "'pattern'", '"pattern"',
             )
             if any(stripped.startswith(k) for k in metadata_keys):
+                continue
+
+            if re.match(r"""^\s*['"]\s*\w""", stripped) and stripped.endswith(("',", '",', "'", '"')):
                 continue
 
             # Run all rules on the raw line
@@ -126,6 +127,8 @@ def main():
         help='Minimum severity to report')
     parser.add_argument('--verbose', '-v',
         action='store_true', help='Show each file being scanned')
+    parser.add_argument('--stats',
+        action='store_true', help='Show per-file finding breakdown after scan')
     args = parser.parse_args()
 
     print("=" * 55)
@@ -155,6 +158,9 @@ def main():
         reporter.json_report(args.output or 'sentinel_report.json')
     elif args.format == 'html':
         reporter.html_report(args.output or 'sentinel_report.html')
+
+    if args.stats:
+        reporter.stats()
 
 
 if __name__ == '__main__':

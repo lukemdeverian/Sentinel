@@ -59,6 +59,43 @@ class Reporter:
                 print(f"  {color}{BOLD}{sev:<10}{RESET}  {counts[sev]}")
         print("=" * 55 + "\n")
 
+    def stats(self):
+        if not self.findings:
+            print("  No findings to summarize.\n")
+            return
+
+        # Group findings by file
+        from collections import defaultdict
+        by_file = defaultdict(list)
+        for f in self.findings:
+            by_file[f.filepath].append(f)
+
+        print("=" * 55)
+        print("  STATS  —  Findings by File")
+        print("=" * 55)
+
+        # Sort files by total finding count descending
+        sorted_files = sorted(by_file.items(), key=lambda x: len(x[1]), reverse=True)
+
+        for filepath, file_findings in sorted_files:
+            counts = {s: 0 for s in SEVERITY_ORDER}
+            for f in file_findings:
+                counts[f.severity] += 1
+
+            # Build a compact severity summary
+            parts = []
+            for sev in reversed(SEVERITY_ORDER):
+                if counts[sev]:
+                    color = SEVERITY_COLORS[sev]
+                    parts.append(f"{color}{BOLD}{sev}: {counts[sev]}{RESET}")
+
+            short_path = filepath.replace('\\', '/').split('/')[-1]
+            print(f"  {BOLD}{short_path}{RESET} — {len(file_findings)} finding(s)")
+            print(f"    {' | '.join(parts)}")
+            print()
+
+        print("=" * 55 + "\n")
+
     # ------------------------------------------------------------------ #
     #  JSON                                                                #
     # ------------------------------------------------------------------ #
