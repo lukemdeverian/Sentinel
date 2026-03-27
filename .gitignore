@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+report.html
+sentinel_report.json
+sentinel_report.html
