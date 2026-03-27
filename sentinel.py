@@ -59,20 +59,32 @@ class Scanner:
             if stripped.startswith('//') or stripped.startswith('#'):
                 continue
 
-            # Skip lines that are purely string definitions (rule metadata)
-            # such as lines where the ONLY code is a string assignment like 'title': '...'
-            if re.match(r"""^\s*['"][a-z_]+['"]\s*:\s*['"]""", stripped):
+            # Skip lines that are purely rule metadata dictionaries
+            # These look like: 'id': 'CPP001' or 'title': 'something'
+            # We detect them by checking if the line is a dict entry where
+            # the KEY is a known rule metadata field
+            metadata_keys = (
+                "'id'", '"id"',
+                "'title'", '"title"',
+                "'description'", '"description"',
+                "'cwe'", '"cwe"',
+                "'severity'", '"severity"',
+                "'pattern'", '"pattern"',
+            )
+            if any(stripped.startswith(k) for k in metadata_keys):
                 continue
 
-            # Strip inline string literals before matching
-            # to avoid flagging pattern descriptions and comments
-            cleaned = re.sub(r'"[^"]*"|\'[^\']*\'', '""', line)
-
+            # Run all rules on the raw line
+            seen = set()
             for rule in rules:
-                if re.search(rule['pattern'], cleaned, re.IGNORECASE):
-                    self.findings.append(
-                        Finding(str(filepath), line_num, line, rule)
-                    )
+                if re.search(rule['pattern'], line, re.IGNORECASE):
+                    # Duplicate. don't fire the same rule twice on one line
+                    key = (rule['id'], line_num)
+                    if key not in seen:
+                        seen.add(key)
+                        self.findings.append(
+                            Finding(str(filepath), line_num, line, rule)
+                        )
 
     def run(self):
         if self.target_path.is_file():
