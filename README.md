@@ -180,4 +180,4 @@ It is intentionally designed to plug into a secure SDLC pipeline as a fast, depe
 
 ## Author
 
-Luke Deverian — Computer Science, UC San Diego
+Luke Deverian — Computer Science & Engineering, UC San Diego
