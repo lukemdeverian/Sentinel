@@ -5,3 +5,6 @@ __pycache__/
 report.html
 sentinel_report.json
 sentinel_report.html
+*.html
+*.json
+imgRead.c
